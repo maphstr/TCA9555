@@ -24,16 +24,16 @@ Then, to finally install **TCA9555**, move to the root folder and type
 python setup.py develop
 ```
 
-which whill install in development mode
+which will install in development mode
 
 ## Usage
 
 ```python
 
 # Import the class
-from TCA9555 import TCA9555
+from tca9555 import TCA9555
 
-# Initialize with standard I2C-bus address
+# Initialize with standard I2C-bus address of TCA9555 a.k.a 0x20
 gpio = TCA9555()
 
 # Print startup-config as human-readable
@@ -46,14 +46,14 @@ gpio.set_output(bits=(0,1,2))
 gpio.int_to_bits(bits=(0,1,2), val=5)
 
 # Read value from bits 0, 1, 2 
-gpio.int_from_bits(bits=(0,1,2))  # 5
+print(gpio.int_from_bits(bits=(0,1,2)))  # 5
 
 # Check if bit 0 is high
 gpio.is_high(0)
 
-# Set bit 6
-gpio.set_bits(bits=6)
+# Set bit 6 and 10
+gpio.set_bits(bits=(6, 10))
 
-# Unset bit 6
+# Unset bits 6
 gpio.unset_bits(bits=6)
 ```
