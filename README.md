@@ -63,7 +63,7 @@ gpio = TCA9555()
 # Print startup-config as human-readable
 print(gpio.format_config())
 
-# Set all pins 0, 1, 2 as output
+# Set pins 0, 1, 2 as output
 gpio.set_output(bits=(0,1,2))
 
 # Write value 5 to bits 0, 1, 2
@@ -75,9 +75,9 @@ print(gpio.int_from_bits(bits=(0,1,2)))  # 5
 # Check if bit 0 is high
 gpio.is_high(0)
 
-# Set bit 6 and 10
-gpio.set_bits(bits=(6, 10))
+# Set bit 1 and 2
+gpio.set_bits(bits=(1, 2))
 
-# Unset bits 6
-gpio.unset_bits(bits=6)
+# Unset bits 2
+gpio.unset_bits(bits=2)
 ```
