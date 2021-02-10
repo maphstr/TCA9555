@@ -26,7 +26,31 @@ python setup.py develop
 
 which will install in development mode
 
+## Setup
+
+To use this module, you need to enable the I2C interface of your Raspberry Pi
+
+```bash
+
+sudo raspi-config
+```
+
+Navigate to the `advanced options - I2C` menu and select `enable`. Now you need to connect the Raspberry Pis I2C pinout to the respective TCA9555 pins
+```bash
+
+ Role | Rpi | TCA9555
+------|-----|--------
+ SDA  |  3  |   23   
+ SCL  |  5  |   22   
+ GND  |  6  |   12   
+ VCC  |  5  |   24   
+```
+
+If you do not plan to set a custom address to your TCA9555, tie address pins A0, A1 & A2 to GND as well. This will result in an IC2-bus address of 0x20 (32).
+ 
 ## Usage
+
+Below you'll find a selection of use-cases. To see all available methods, please check [here](https://github.com/leloup314/TCA9555/blob/master/tca9555/tca9555.py)
 
 ```python
 
