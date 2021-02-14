@@ -24,13 +24,13 @@ class TCA9555(object):
     # Internal registers of (port_0, port_1)
     regs = {
         # Registers holding the actual values of the pin levels
-        'input': (0x00, 0x01),
+        "input": (0x00, 0x01),
         # Registers holding the target values of pin levels
-        'output': (0x02, 0x03),
+        "output": (0x02, 0x03),
         # Registers holding the polarity (active-high or active-low)
-        'polarity': (0x04, 0x05),
+        "polarity": (0x04, 0x05),
         # Registers holding whether the pins are configured as in- (1) or output (0)
-        'config': (0x06, 0x07)
+        "config": (0x06, 0x07),
     }
 
     # Number of available io bits; bits are shared into ports
@@ -60,18 +60,22 @@ class TCA9555(object):
 
         # Quick check; if self.device_id == -1 an error occurred
         if self.device_id == -1:
-            raise IOError("Failed to establish connection on I2C-bus address {}".format(hex(self.address)))
+            raise IOError(
+                "Failed to establish connection on I2C-bus address {}".format(
+                    hex(self.address)
+                )
+            )
 
         if config:
             self.config = config
 
     @property
     def io_state(self):
-        return self.get_state('input')
+        return self.get_state("input")
 
     @io_state.setter
     def io_state(self, state):
-        self.set_state('output', state)
+        self.set_state("output", state)
 
     @property
     def n_io_bits(self):
@@ -150,16 +154,20 @@ class TCA9555(object):
             pass
 
         elif isinstance(state, int):
-            state = bs.BitArray('uint:{}={}'.format(bit_length, state))
+            state = bs.BitArray("uint:{}={}".format(bit_length, state))
 
         elif isinstance(state, Iterable):
             state = bs.BitArray(state)
 
         else:
-            raise ValueError('State must be integer, string or BitArray representing {} bits'.format(bit_length))
+            raise ValueError(
+                "State must be integer, string or BitArray representing {} bits".format(
+                    bit_length
+                )
+            )
 
         if len(state) != bit_length:
-            raise ValueError('State must be {}} bits'.format(bit_length))
+            raise ValueError("State must be {}} bits".format(bit_length))
 
         return state
 
@@ -174,7 +182,11 @@ class TCA9555(object):
         """
 
         if reg not in self.regs:
-            raise ValueError('Register {} does not exist. Available registers: {}'.format(reg, ', '.join(self.regs.keys())))
+            raise ValueError(
+                "Register {} does not exist. Available registers: {}".format(
+                    reg, ", ".join(self.regs.keys())
+                )
+            )
 
     def _check_bits(self, bits, val=None):
         """
@@ -191,14 +203,24 @@ class TCA9555(object):
         bits = bits if isinstance(bits, Iterable) else [bits]
 
         if any(not 0 <= b < self._n_io_bits for b in bits):
-            raise IndexError("{}'s {} bits are indexed from {} to {}".format(self.__class__.__name__, self._n_io_bits, 0, self._n_io_bits - 1))
+            raise IndexError(
+                "{}'s {} bits are indexed from {} to {}".format(
+                    self.__class__.__name__, self._n_io_bits, 0, self._n_io_bits - 1
+                )
+            )
 
         if len(set(bits)) != len(bits):
-            raise IndexError('Duplicate bit indices! *bits* must be composed of unique bit indices')
+            raise IndexError(
+                "Duplicate bit indices! *bits* must be composed of unique bit indices"
+            )
 
         if val:
             if val.bit_length() > len(bits):
-                raise ValueError('Too little bits. Bit length of value {} is {}, the number of bits is {}'.format(val, val.bit_length(), len(bits)))
+                raise ValueError(
+                    "Too little bits. Bit length of value {} is {}, the number of bits is {}".format(
+                        val, val.bit_length(), len(bits)
+                    )
+                )
 
         return bits
 
@@ -256,7 +278,9 @@ class TCA9555(object):
         for port in range(self._n_ports):
 
             # Compare individual current port states with target port states
-            target_port_state = target_reg_state[port * self._n_bits_per_port:(port + 1) * self._n_bits_per_port]
+            target_port_state = target_reg_state[
+                port * self._n_bits_per_port : (port + 1) * self._n_bits_per_port
+            ]
 
             # If target and current state differ, write
             if target_port_state != self.get_port_state(reg=reg, port=port):
@@ -280,7 +304,7 @@ class TCA9555(object):
         self._check_register(reg)
 
         if port not in (0, 1):
-            raise IndexError('*port* must be index of physical port; either 0 or 1')
+            raise IndexError("*port* must be index of physical port; either 0 or 1")
 
         target_state = self._create_state(state=state, bit_length=self._n_bits_per_port)
 
@@ -299,7 +323,9 @@ class TCA9555(object):
             Name of register whose state will be read
         """
 
-        state = sum([self.get_port_state(reg=reg, port=port) for port in range(self._n_ports)])
+        state = sum(
+            [self.get_port_state(reg=reg, port=port) for port in range(self._n_ports)]
+        )
 
         return state
 
@@ -319,10 +345,13 @@ class TCA9555(object):
         self._check_register(reg)
 
         if port not in (0, 1):
-            raise IndexError('*port* must be index of physical port; either 0 or 1')
+            raise IndexError("*port* must be index of physical port; either 0 or 1")
 
         # Read port state
-        port_state = self._create_state(state=self._read_reg(reg=self.regs[reg][port]), bit_length=self._n_bits_per_port)
+        port_state = self._create_state(
+            state=self._read_reg(reg=self.regs[reg][port]),
+            bit_length=self._n_bits_per_port,
+        )
 
         # Match bit order with physical pin order, increasing left to right
         port_state.reverse()
@@ -403,7 +432,7 @@ class TCA9555(object):
         bits: Iterable, int, None
             bits for which the direction will be set
         """
-        self._set_bits(reg='config', val=int(bool(direction)), bits=bits)
+        self._set_bits(reg="config", val=int(bool(direction)), bits=bits)
 
     def set_polarity(self, polarity, bits=None):
         """
@@ -416,7 +445,7 @@ class TCA9555(object):
         bits: Iterable, int, None
             bits for which the polarity will be set
         """
-        self._set_bits(reg='polarity', val=int(bool(polarity)), bits=bits)
+        self._set_bits(reg="polarity", val=int(bool(polarity)), bits=bits)
 
     def set_level(self, level, bits=None):
         """
@@ -429,9 +458,9 @@ class TCA9555(object):
         bits: Iterable, int, None
             bits for which the level will be set
         """
-        self._set_bits(reg='output', val=int(bool(level)), bits=bits)
+        self._set_bits(reg="output", val=int(bool(level)), bits=bits)
 
-    def format_config(self, format_='bin'):
+    def format_config(self, format_="bin"):
         """
         Method returning a more readable version of self.config
 
