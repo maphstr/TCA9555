@@ -5,6 +5,7 @@
 ## Introduction
 
 **TCA9555** is a Python module for interfacing the Texas Instruments [TCA9555](https://www.ti.com/lit/ds/symlink/tca9555.pdf) 16-bit I2C-based GPIO expander using a Raspberry Pi.
+All public methods are **thread-safe** which allows for continuous reading / writing to the GPIO from mutliple threads.
 
 ## Installation
 
@@ -48,7 +49,9 @@ Navigate to the `advanced options - I2C` menu and select `enable`. Now you need 
 
 If you do not plan to set a custom address to your TCA9555, tie address pins A0, A1 & A2 to GND as well. This will result in an IC2-bus address of 0x20 (32).
  
-## Usage
+## Examples
+
+### Basic usage
 
 Below you'll find a selection of use-cases. To see all available methods, please check [here](https://github.com/leloup314/TCA9555/blob/master/tca9555/tca9555.py)
 
@@ -81,3 +84,48 @@ gpio.set_bits(bits=(1, 2))
 # Unset bits 2
 gpio.unset_bits(bits=2)
 ```
+
+### Multi-threaded usage
+
+A more advanced scenario is that certain pins of the GPIO expander are used to read a value, while others are used to set registers / logic levels of other ICs.
+Such a scenario is shown below
+
+```python
+# Imports
+from tca9555 import TCA9555
+from threading import Thread, Event
+
+def continuous_read(pins):
+    """Read continuously from *pins* until *flag* is set"""
+    while not flag.is_set():
+        res = gpio.int_from_bits(bits=pins)
+        print(res)
+
+# Initialize GPIO expander
+gpio = TCA9555()
+
+# Initialize flag to stop thread
+flag = Event()
+
+# Read 4 bit integer from pins 0 to 3
+read_pins = (0, 1, 2, 3)
+
+# Make thread
+t = Thread(target=continuous_read, args=(read_pins,))
+
+# Start thread
+t.start()
+
+# Continue to use gpio to set other pins
+gpio.set_bits(bits=(4, 7, 15))
+gpio.set_bits(bits=(5, 8, 11))
+gpio.unset_bits(bits=(4, 8, 15))
+gpio.int_to_bits(bits=(12, 13, 14), val=7)
+
+# Continue working...
+
+# Stop thread
+flag.set()
+t.join()
+```
+
