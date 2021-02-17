@@ -91,9 +91,7 @@ class TCA9555(object):
         # Quick check; if self.device_id == -1 an error occurred
         if self.device_id == -1:
             raise IOError(
-                "Failed to establish connection on I2C-bus address {}".format(
-                    hex(self.address)
-                )
+                "Failed to establish connection on I2C-bus address {}".format(hex(self.address))
             )
 
         # Flag which indicates writing or reading condition
@@ -207,9 +205,7 @@ class TCA9555(object):
 
         else:
             raise ValueError(
-                "State must be integer, string or BitArray representing {} bits".format(
-                    bit_length
-                )
+                "State must be integer, string or BitArray representing {} bits".format(bit_length)
             )
 
         if len(state) != bit_length:
@@ -254,9 +250,7 @@ class TCA9555(object):
             )
 
         if len(set(bits)) != len(bits):
-            raise IndexError(
-                "Duplicate bit indices! *bits* must be composed of unique bit indices"
-            )
+            raise IndexError("Duplicate bit indices! *bits* must be composed of unique bit indices")
 
         if val:
             if val.bit_length() > len(bits):
@@ -321,7 +315,7 @@ class TCA9555(object):
 
             # Compare individual current port states with target port states
             target_port_state = target_reg_state[
-                port * self._n_bits_per_port: (port + 1) * self._n_bits_per_port
+                port * self._n_bits_per_port : (port + 1) * self._n_bits_per_port
             ]
 
             # If target and current state differ, write
