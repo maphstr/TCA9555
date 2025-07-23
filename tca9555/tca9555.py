@@ -76,7 +76,7 @@ class TCA9555(object):
     # Number of ports of TCA9555
     _n_ports = 2
 
-    def __init__(self, address=0x20, bus="/dev/i2c-6" config=None):
+    def __init__(self, address=0x20, bus="/dev/i2c-6", config=None):
         """
         Initialize the connection to the chip and set the a configuration if given
 
