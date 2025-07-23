@@ -72,21 +72,24 @@ class TCA9555(object):
     # Number of ports of TCA9555
     _n_ports = 2
 
-    def __init__(self, address=0x20, config=None):
+    def __init__(self, address=0x20, bus="/dev/i2c-6" config=None):
         """
         Initialize the connection to the chip and set the a configuration if given
 
         address: int
             integer of the I2C address of the TCA9555 (default is 0x20 e.g. 32)
+        bus: str
+            string device path I2C bus of the TCA9555 (default is/dev/i2c-6)            
         config: dict
             dictionary holding register values which should be set
         """
 
         # I2C-bus address; 0x20 (32 in decimal) if all address pins A0=A1=A2 are low
         self.address = address
+        self.bus = bus
 
         # Setup I2C-bus communication using wiringpi library
-        self.device_id = wp.wiringPiI2CSetup(self.address)
+        self.device_id = wp.wiringPiI2CSetupInterface(self.bus, self.address)
 
         # Quick check; if self.device_id == -1 an error occurred
         if self.device_id == -1:
