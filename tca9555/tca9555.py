@@ -1,6 +1,10 @@
 import wiringpi as wp
 import bitstring as bs
-from collections import Iterable
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
+    
 from functools import wraps
 from threading import Event
 
