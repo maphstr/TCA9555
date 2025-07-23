@@ -175,30 +175,30 @@ class TCA9555(object):
         """
         return wp.wiringPiI2CWriteReg8(self.device_id, reg, data)
 
-def _read_reg(self, reg, max_retries=None, delay=0.1):
-    """
-    Reads one byte from register `reg`. If the device is absent, wiringPi returns -1;
-    in that case this will keep retrying (indefinitely by default) until it gets >=0.
+    def _read_reg(self, reg, max_retries=None, delay=0.1):
+        """
+        Reads one byte from register `reg`. If the device is absent, wiringPi returns -1;
+        in that case this will keep retrying (indefinitely by default) until it gets >=0.
 
-    Parameters
-    ----------
-    reg : int
-        Register address
-    max_retries : int or None
-        If set, gives up after this many attempts and returns -1.
-        If None, retries forever.
-    delay : float
-        Seconds to wait between attempts.
-    """
-    attempt = 0
-    while True:
-        res = wp.wiringPiI2CReadReg8(self.device_id, reg)
-        if res >= 0:
-            return res
-        attempt += 1
-        if max_retries is not None and attempt >= max_retries:
-            return -1
-        time.sleep(delay)
+        Parameters
+        ----------
+        reg : int
+            Register address
+        max_retries : int or None
+            If set, gives up after this many attempts and returns -1.
+            If None, retries forever.
+        delay : float
+            Seconds to wait between attempts.
+        """
+        attempt = 0
+        while True:
+            res = wp.wiringPiI2CReadReg8(self.device_id, reg)
+            if res >= 0:
+                return res
+            attempt += 1
+            if max_retries is not None and attempt >= max_retries:
+                return -1
+            time.sleep(delay)
 
     def _create_state(self, state, bit_length):
         """
